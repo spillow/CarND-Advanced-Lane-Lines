@@ -1,3 +1,4 @@
 .ipynb_checkpoints/
 raw_images/
 processed_images/
+*.swp

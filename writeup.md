@@ -14,14 +14,14 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./output_images/calibration.png "Undistorted"
-[image2]: ./test_images/test1.jpg "Road Transformed"
-[image3]: ./examples/binary_combo_example.jpg "Binary Example"
+[image2]: ./output_images/undistored_image.png "Road Transformed"
+[image3]: ./output_images/binary_image.png "Binary Example"
 [image4]: ./examples/warped_straight_lines.jpg "Warp Example"
 [image5]: ./examples/color_fit_lines.jpg "Fit Visual"
 [image6]: ./examples/example_output.jpg "Output"
 [video1]: ./project_video.mp4 "Video"
 
----
+----------------------
 
 The project includes the following files:
 * [Lane_Detection.ipynb](https://github.com/spillow/CarND-Advanced-Lane-Lines/blob/master/Lane_Detection.ipynb) The code
@@ -45,12 +45,19 @@ With the left image the original and the right having removed distortion (note t
 
 #### 1. Provide an example of a distortion-corrected image.
 
-To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
+Having obtained the camera calibration matrix and distortion coefficients above, the same procedure of image undistortion via `cv2.undistort()` may be used on road images:
 ![alt text][image2]
+
+(Note the position of the white car in both images with respect to the right edge of the image)
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
+The implementation for image binarization to extract candidate pixels for lane lines in under the "Thresholding" section of the ipython notebook in `lane_line_extract()`.
+
+The image is first converted from RGB to HLS and the S (Saturation) channel is extracted.  This channel is more immune to changes from lighting conditions than, say, a grayscale image.
+
+Then, a 3x3 sized Sobel operator is applied to the S channel in the x and y directions.  This tells us whether the image is changing in either direction.  These features are combined
+to calculate the magnitude and direction of the gradient of each point.  For example, we can reject gradients that are very "flat" (i.e., little change in the x-direction but mostly in the y) as these are very unlikely to be lane lines (or possibly the car is in a very dicey situation!).  Given the code in cell `In [128]` we extract:
 
 ![alt text][image3]
 
