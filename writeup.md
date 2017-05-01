@@ -16,7 +16,7 @@ The goals / steps of this project are the following:
 [image1]: ./output_images/calibration.png "Undistorted"
 [image2]: ./output_images/undistored_image.png "Road Transformed"
 [image3]: ./output_images/binary_image.png "Binary Example"
-[image4]: ./examples/warped_straight_lines.jpg "Warp Example"
+[image4]: ./output_images/perspective.png "Warp Example"
 [image5]: ./examples/color_fit_lines.jpg "Fit Visual"
 [image6]: ./examples/example_output.jpg "Output"
 [video1]: ./project_video.mp4 "Video"
@@ -63,31 +63,23 @@ to calculate the magnitude and direction of the gradient of each point.  For exa
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
-The code for my perspective transform includes a function called `warper()`, which appears in lines 1 through 8 in the file `example.py` (output_images/examples/example.py) (or, for example, in the 3rd code cell of the IPython notebook).  The `warper()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
+The code to calculate the perspective transform is in cell `In [127]` in `ex2()`.  The idea is to take the head on view of the road from the camera and transform it into a
+top down perspective that will make it easier to fit a curve to the lines and calculate the radius of curvature.
 
-```python
-src = np.float32(
-    [[(img_size[0] / 2) - 55, img_size[1] / 2 + 100],
-    [((img_size[0] / 6) - 10), img_size[1]],
-    [(img_size[0] * 5 / 6) + 60, img_size[1]],
-    [(img_size[0] / 2 + 55), img_size[1] / 2 + 100]])
-dst = np.float32(
-    [[(img_size[0] / 4), 0],
-    [(img_size[0] / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), 0]])
-```
+To calculate a perspective transform, a four point correspondence is needed between the source image and where we want those points mapped to in the resulting image.
 
-This resulted in the following source and destination points:
+Four points are manually selected that draw out a trapezoid of the lane lines to map to a top down rectangle:
 
 | Source        | Destination   |
 |:-------------:|:-------------:|
-| 585, 460      | 320, 0        |
-| 203, 720      | 320, 720      |
-| 1127, 720     | 960, 720      |
-| 695, 460      | 960, 0        |
+| 200, 1279     | 200, 1279     |
+| 590, 450      | 200, 0        |
+| 690, 450      | 1000, 0       |
+| 1100, 1279    | 1000, 1279    |
 
-I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
+Although a more robust implementation may dynamically calculate this as the road shape/angle changes, for our purposes we use the same transformation throughout.
+
+The perspective transform was verified by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image:
 
 ![alt text][image4]
 
